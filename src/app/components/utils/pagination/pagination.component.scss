@@ -1,0 +1,15 @@
+div > button {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+div > button:last-child {
+  margin-right: 0;
+}
+div > button:first-child {
+  margin-left: 0;
+}
+
+div > button.active {
+  box-shadow: 2px 2px black;
+  --tw-border-opacity: 0.75;
+}

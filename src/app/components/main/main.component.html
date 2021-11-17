@@ -1,0 +1,296 @@
+<div class="container mx-auto">
+  <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+      <div
+        class="
+          shadow
+          overflow-hidden
+          border-b border-gray-200
+          sm:rounded-lg
+          bg-white
+        "
+      >
+        <div class="mx-2 my-2">
+          <input
+            class="
+              shadow
+              appearance-none
+              border
+              rounded
+              w-full
+              py-2
+              px-3
+              text-gray-700
+              leading-tight
+              focus:outline-none focus:shadow-outline
+            "
+            id="username"
+            type="text"
+            placeholder="Search by name email and role"
+            [(ngModel)]="searchString"
+            (ngModelChange)="searchStr($event)"
+          />
+        </div>
+
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th
+                *ngFor="let col of columns"
+                scope="col"
+                class="
+                  py-3
+                  text-left text-xs
+                  font-medium
+                  text-gray-500
+                  uppercase
+                  tracking-wider
+                "
+                [class.px-2]="col.type === 'text'"
+                [class.sm:px-4]="col.type === 'text'"
+                [class.md:px-6]="col.type === 'text'"
+                [ngClass]="col.className || ''"
+              >
+                <ng-container *ngIf="col.type === 'text'">
+                  {{ col.title }}
+                </ng-container>
+                <ng-container *ngIf="col.type === 'select'">
+                  <input
+                    type="checkbox"
+                    [checked]="isAllSelected()"
+                    class="checkbox border-gray-300"
+                    (click)="SelectAll($event)"
+                  />
+                </ng-container>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr *ngFor="let user of Paginate(usersDisplay)">
+              <!-- Select checkbox for each row -->
+              <td class="px-2 py-4 whitespace-nowrap">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="user.selected"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="checkbox border-gray-300"
+                />
+              </td>
+              <!-- User Column for small screen size. -->
+              <td class="px-2 sm:px-4 md:px-6 py-4 whitespace-nowrap sm:hidden">
+                <div class="flex items-center">
+                  <div class="">
+                    <div class="text-sm font-medium text-gray-900">
+                      <ng-container *ngIf="!user.editing">
+                        {{ user.name }}
+                      </ng-container>
+                      <ng-container *ngIf="user.editing">
+                        <div class="form-control">
+                          <input
+                            type="text"
+                            [formControl]="$any(getControl(user, 'name'))"
+                            class="input input-bordered"
+                          />
+                        </div>
+                      </ng-container>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                      <ng-container *ngIf="!user.editing">
+                        {{ user.email }}
+                      </ng-container>
+                      <ng-container *ngIf="user.editing">
+                        <div class="form-control">
+                          <input
+                            type="text"
+                            [formControl]="$any(getControl(user, 'email'))"
+                            class="input input-bordered"
+                          />
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <!-- Name Column for non small screen sizes -->
+              <td
+                class="
+                  px-2
+                  sm:px-4
+                  md:px-6
+                  py-4
+                  whitespace-nowrap
+                  hidden
+                  sm:table-cell
+                "
+              >
+                <ng-container *ngIf="!user.editing">
+                  {{ user.name }}
+                </ng-container>
+                <ng-container *ngIf="user.editing">
+                  <div class="form-control">
+                    <input
+                      type="text"
+                      [formControl]="$any(getControl(user, 'name'))"
+                      class="input input-bordered"
+                    />
+                  </div>
+                </ng-container>
+              </td>
+
+              <!-- Email Column for non small screen sizes -->
+              <td
+                class="
+                  px-2
+                  sm:px-4
+                  md:px-6
+                  py-4
+                  whitespace-nowrap
+                  hidden
+                  sm:table-cell
+                "
+              >
+                <ng-container *ngIf="!user.editing">
+                  {{ user.email }}
+                </ng-container>
+                <ng-container *ngIf="user.editing">
+                  <div class="form-control">
+                    <input
+                      type="text"
+                      [formControl]="$any(getControl(user, 'email'))"
+                      class="input input-bordered"
+                    />
+                  </div>
+                </ng-container>
+              </td>
+              <!-- Role Column  -->
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <ng-container *ngIf="!user.editing">
+                  {{ user.role | titlecase }}
+                </ng-container>
+                <ng-container *ngIf="user.editing">
+                  <div class="form-control">
+                    <input
+                      type="text"
+                      [formControl]="$any(getControl(user, 'role'))"
+                      class="input input-bordered"
+                    />
+                  </div>
+                </ng-container>
+              </td>
+
+              <!-- Buttons/Action Column  -->
+              <td
+                class="
+                  px-2
+                  sm:px-4
+                  md:px-6
+                  py-4
+                  whitespace-nowrap
+                  text-right text-sm
+                  font-medium
+                "
+              >
+                <div class="flex">
+                  <!-- Edit Button -->
+                  <ng-container *ngIf="!user.editing">
+                    <a
+                      (click)="user.editing = true"
+                      class="text-indigo-600 hover:text-indigo-900"
+                      ><svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </a>
+                    <!-- Delete Button -->
+                    <a
+                      (click)="deleteUser(user.id)"
+                      class="text-indigo-600 hover:text-indigo-900"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                        />
+                      </svg>
+                    </a>
+                  </ng-container>
+                  <ng-container *ngIf="user.editing">
+                    <!-- Save -->
+                    <a
+                      (click)="saveChanges(user)"
+                      class="text-green-600 hover:text-indigo-900"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </a>
+                    <!-- Cancel -->
+                    <a
+                      (click)="user.editing = false"
+                      class="hover:text-indigo-900 text-red-600"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </a>
+                  </ng-container>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="my-2 flex justify-between">
+          <button class="btn btn-primary" (click)="deleteSelected()">
+            Delete Selected
+          </button>
+          <app-pagination
+            [pageSize]="10"
+            [totalItems]="usersDisplay.length"
+            (changePage)="changePage($event)"
+          ></app-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

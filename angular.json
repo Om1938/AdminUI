@@ -27,20 +27,8 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": [
-              "src/styles.scss",
-              "node_modules/semantic-ui-css/components/transition.min.css",
-              "node_modules/semantic-ui-css/components/dropdown.min.css",
-              "node_modules/semantic-ui-css/components/label.min.css",
-              "node_modules/semantic-ui-css/components/segment.min.css",
-              "node_modules/semantic-ui-css/components/button.min.css",
-              "node_modules/semantic-ui-css/components/input.min.css",
-              "node_modules/semantic-ui-css/components/icon.min.css"
-            ],
-            "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/semantic-ui-css/semantic.min.js"
-            ]
+            "styles": ["src/styles.scss"],
+            "scripts": []
           },
           "configurations": {
             "production": {
